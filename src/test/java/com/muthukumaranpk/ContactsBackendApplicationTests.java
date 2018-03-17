@@ -116,7 +116,7 @@ public class ContactsBackendApplicationTests {
 	}
 
 	@Test(expected = ContactNotFoundException.class)
-	public void getNotExistingContact() {
+	public void getNonExistingContact() {
 		contactsService.getContact("name1000");
 	}
 
@@ -168,7 +168,7 @@ public class ContactsBackendApplicationTests {
 	}
 
 	@Test(expected = ContactNotFoundException.class)
-	public void updateNotExistingContact() {
+	public void updateNonExistingContact() {
 		Contact validContact = new Contact();
 		validContact.setName("name1000");
 		validContact.setPhoneNumber(1111111111L);
