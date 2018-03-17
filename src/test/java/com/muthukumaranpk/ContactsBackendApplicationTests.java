@@ -85,8 +85,8 @@ public class ContactsBackendApplicationTests {
 		Contact validContact = new Contact();
 		validContact.setName("name1");
 		validContact.setPhoneNumber(1111111111L);
-		validContact.setAddress("#4, east village, NY");
-		validContact.setEmail("email1@email.com");
+		validContact.setAddress("#1, east village, NY");
+		validContact.setEmail("one@one.com");
 		contactsService.createContact(validContact);
 		assertEquals(validContact, contactsService.getContact(validContact.getName()));
 		contactsService.deleteContact(validContact.getName());
@@ -96,9 +96,9 @@ public class ContactsBackendApplicationTests {
 	public void createDuplicateContact() {
 		Contact validContact = new Contact();
 		validContact.setName("name2");
-		validContact.setPhoneNumber(1111111111L);
-		validContact.setAddress("#4, east village, NY");
-		validContact.setEmail("email1@email.com");
+		validContact.setPhoneNumber(2222222222L);
+		validContact.setAddress("#2, east village, NY");
+		validContact.setEmail("two@two.com");
 		contactsService.createContact(validContact);
 		contactsService.createContact(validContact);
 		contactsService.deleteContact(validContact.getName());
@@ -113,9 +113,9 @@ public class ContactsBackendApplicationTests {
 	public void getValidContact() {
 		Contact validContact = new Contact();
 		validContact.setName("name3");
-		validContact.setPhoneNumber(1111111111L);
-		validContact.setAddress("#4, east village, NY");
-		validContact.setEmail("email1@email.com");
+		validContact.setPhoneNumber(3333333333L);
+		validContact.setAddress("#3, east village, NY");
+		validContact.setEmail("three@three.com");
 		contactsService.createContact(validContact);
 		assertEquals(validContact, contactsService.getContact(validContact.getName()));
 		contactsService.deleteContact(validContact.getName());
@@ -177,15 +177,15 @@ public class ContactsBackendApplicationTests {
 	public void updateValidContact() {
 		Contact validContact = new Contact();
 		validContact.setName("name4");
-		validContact.setPhoneNumber(1111111111L);
+		validContact.setPhoneNumber(4444444444L);
 		validContact.setAddress("#4, east village, NY");
-		validContact.setEmail("email1@email.com");
+		validContact.setEmail("four@four.com");
 		contactsService.createContact(validContact);
 		Contact updatedContact = new Contact();
 		updatedContact.setName("name4");
-		updatedContact.setPhoneNumber(2222222222L);
+		updatedContact.setPhoneNumber(6666666666L);
 		updatedContact.setAddress("#4, east village, NY");
-		updatedContact.setEmail("email1@email.com");
+		updatedContact.setEmail("four@four.com");
 		contactsService.updateContact(validContact.getName(), updatedContact);
 		assertEquals(updatedContact, contactsService.getContact(validContact.getName()));
 		contactsService.deleteContact(validContact.getName());
@@ -200,9 +200,9 @@ public class ContactsBackendApplicationTests {
 	public void deleteValidContact() {
 		Contact validContact = new Contact();
 		validContact.setName("name5");
-		validContact.setPhoneNumber(1111111111L);
-		validContact.setAddress("#4, east village, NY");
-		validContact.setEmail("email1@email.com");
+		validContact.setPhoneNumber(5555555555L);
+		validContact.setAddress("#5, east village, NY");
+		validContact.setEmail("five@five.com");
 		contactsService.createContact(validContact);
 		contactsService.deleteContact(validContact.getName());
 		contactsService.getContact(validContact.getName());

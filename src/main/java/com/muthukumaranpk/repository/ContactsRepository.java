@@ -13,12 +13,15 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,17 +47,33 @@ public class ContactsRepository {
     }
 
     public List<Contact> searchContacts(int from, int size, String query) {
-        // utilize rangeStart and rangeEnd
         QueryBuilder qb = QueryBuilders.queryStringQuery(query);
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch()
                 .setIndices("contacts")
-                .setQuery(qb);
-//                .setFrom()
-//                .setSize();
+                .setQuery(qb)
+                .setFrom(from)
+                .setSize(size);
 
         SearchResponse response = searchRequestBuilder.execute().actionGet();
         System.out.println(response);
-        return null;
+        SearchHit[] searchHits = response.getHits().getHits();
+        List<Contact> resultList = new ArrayList<>();
+        for (SearchHit searchHit : searchHits) {
+            String name = searchHit.getId();
+            Map<String, Object> map = searchHit.getSourceAsMap();
+            long phoneNumber = Long.valueOf(map.get("phoneNumber").toString());
+            String address = map.get("address").toString();
+            String email = map.get("emailAddress").toString();
+
+            Contact newContact = new Contact();
+            newContact.setName(name);
+            newContact.setEmail(email);
+            newContact.setAddress(address);
+            newContact.setPhoneNumber(phoneNumber);
+
+            resultList.add(newContact);
+        }
+        return resultList;
     }
 
     public Contact createContact(Contact contact) {
