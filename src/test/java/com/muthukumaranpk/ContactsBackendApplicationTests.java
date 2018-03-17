@@ -22,7 +22,6 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ContactsBackendApplicationTests {
-
 	@Autowired
 	private ContactsService contactsService;
 
@@ -57,7 +56,7 @@ public class ContactsBackendApplicationTests {
 		contactsService.deleteContact(validContact2.getName());
 	}
 
-	// TODO: rename
+
 	@Test(expected = InvalidContactFieldException.class)
 	public void createContactInvalidTest_invalid_name() {
 		contactsService.createContact(contactWithInvalidName);

@@ -16,6 +16,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.net.InetAddress;
@@ -33,20 +34,22 @@ import java.util.concurrent.TimeoutException;
  */
 @Repository
 public class ContactsRepository {
-    private TransportClient client;
-    private static final String HOST_NAME = "localhost";
-    private static final int PORT_NUMBER = 9300;
-    private static final String CLUSTER_NAME = "elasticsearch";
 
-    public ContactsRepository() {
-        final Settings settings = Settings.builder().put("cluster.name", CLUSTER_NAME).build();
-        try {
-            client = new PreBuiltTransportClient(settings)
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(HOST_NAME), PORT_NUMBER));
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-    }
+    @Autowired
+    private TransportClient client;
+//    private static final String HOST_NAME = "localhost";
+//    private static final int PORT_NUMBER = 9300;
+//    private static final String CLUSTER_NAME = "elasticsearch";
+
+//    public ContactsRepository() {
+//        final Settings settings = Settings.builder().put("cluster.name", CLUSTER_NAME).build();
+//        try {
+//            client = new PreBuiltTransportClient(settings)
+//                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(HOST_NAME), PORT_NUMBER));
+//        } catch (UnknownHostException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public List<Contact> searchContacts(int from, int size, String query) {
         final QueryBuilder qb = QueryBuilders.queryStringQuery(query);

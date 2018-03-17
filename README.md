@@ -1,4 +1,5 @@
 # ContactsBackend
+
 Setup:
    Step 1: Import the project in Intellij
    Step 2: Run elasticsearch process in the background (./bin/elasticsearch)
