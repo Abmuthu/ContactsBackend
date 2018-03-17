@@ -17,17 +17,15 @@ import java.util.List;
  */
 @Service
 public class ContactsService {
-
     @Autowired
     ContactsRepository contactsRepository;
 
     public List<Contact> searchContacts(int pageSize, int page, String query) {
-        int from = (page - 1) * pageSize; // calculate
+        final int from = (page - 1) * pageSize; // calculate
         return contactsRepository.searchContacts(from, pageSize, query);
     }
 
     public Contact createContact(Contact contact) {
-        // TODO: check if already exists using name
         Validator.validateContact(contact);
         if (contactsRepository.contactExists(contact.getName())) {
             throw new ContactAlreadyExistsException(contact.getName());
@@ -36,7 +34,8 @@ public class ContactsService {
     }
 
     public Contact getContact(String name) {
-        Contact contact = contactsRepository.getContact(name);
+        Validator.validateName(name);
+        final Contact contact = contactsRepository.getContact(name);
         if (contact == null) {
             throw new ContactNotFoundException(name);
         }
@@ -53,6 +52,7 @@ public class ContactsService {
     }
 
     public Contact deleteContact(String name) {
+        Validator.validateName(name);
         if (!contactsRepository.contactExists(name)) {
             throw new ContactNotFoundException(name);
         }

@@ -16,7 +16,7 @@ public class Validator {
         validateEmail(contact.getEmail());
     }
 
-    private static void validateName(String name) {
+    public static void validateName(String name) {
         if (name == null || name.length() < 1 || name.length() > 50) {
             throw new InvalidContactFieldException("name");
         }

@@ -6,13 +6,14 @@ import com.muthukumaranpk.exception.ContactNotFoundException;
 import com.muthukumaranpk.exception.InvalidContactFieldException;
 import com.muthukumaranpk.repository.ContactsRepository;
 import com.muthukumaranpk.service.ContactsService;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -34,84 +35,72 @@ public class ContactsBackendApplicationTests {
 	private static Contact contactWithMissingAddress;
 	private static Contact contactWithMissingEmail;
 
+	private static Contact validContact1;
+	private static Contact validContact2;
 
 	@BeforeClass
 	public static void setup() {
 		initializeInvalidContacts();
 		initializeMissingFieldContacts();
+		initializeValidContacts();
 	}
 
+	@Before
+	public void createValidContacts() {
+		contactsService.createContact(validContact1);
+		contactsService.createContact(validContact2);
+	}
+
+	@After
+	public void deleteValidContacts() {
+		contactsService.deleteContact(validContact1.getName());
+		contactsService.deleteContact(validContact2.getName());
+	}
+
+	// TODO: rename
 	@Test(expected = InvalidContactFieldException.class)
-	public void createContactInvalidTest1() {
+	public void createContactInvalidTest_invalid_name() {
 		contactsService.createContact(contactWithInvalidName);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void createContactInvalidTest2() {
+	public void createContactInvalidTest_invalid_phonenumber() {
 		contactsService.createContact(contactWithInvalidPhoneNumber);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void createContactInvalidTest3() {
+	public void createContactInvalidTest_invalid_address() {
 		contactsService.createContact(contactWithInvalidAddress);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void createContactInvalidTest4() {
+	public void createContactInvalidTest_invalid_email() {
 		contactsService.createContact(contactWithInvalidEmail);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void createContactMissingFieldTest1() {
+	public void createContactMissingFieldTest_missing_name() {
 		contactsService.createContact(contactWithMissingName);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void createContactMissingFieldTest2() {
+	public void createContactMissingFieldTest_missing_phonenumber() {
 		contactsService.createContact(contactWithMissingPhoneNumber);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void createContactMissingFieldTest3() {
+	public void createContactMissingFieldTest_missing_address() {
 		contactsService.createContact(contactWithMissingAddress);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void createContactMissingFieldTest4() {
+	public void createContactMissingFieldTest_missing_email() {
 		contactsService.createContact(contactWithMissingEmail);
 	}
 
+
 	@Test
 	public void createValidContact() {
-		Contact validContact = new Contact();
-		validContact.setName("name1");
-		validContact.setPhoneNumber(1111111111L);
-		validContact.setAddress("#1, east village, NY");
-		validContact.setEmail("one@one.com");
-		contactsService.createContact(validContact);
-		assertEquals(validContact, contactsService.getContact(validContact.getName()));
-		contactsService.deleteContact(validContact.getName());
-	}
-
-	@Test(expected = ContactAlreadyExistsException.class)
-	public void createDuplicateContact() {
-		Contact validContact = new Contact();
-		validContact.setName("name2");
-		validContact.setPhoneNumber(2222222222L);
-		validContact.setAddress("#2, east village, NY");
-		validContact.setEmail("two@two.com");
-		contactsService.createContact(validContact);
-		contactsService.createContact(validContact);
-		contactsService.deleteContact(validContact.getName());
-	}
-
-	@Test(expected = ContactNotFoundException.class)
-	public void getNotExistingContact() {
-		contactsService.getContact("name1000");
-	}
-
-	@Test
-	public void getValidContact() {
 		Contact validContact = new Contact();
 		validContact.setName("name3");
 		validContact.setPhoneNumber(3333333333L);
@@ -122,45 +111,60 @@ public class ContactsBackendApplicationTests {
 		contactsService.deleteContact(validContact.getName());
 	}
 
+	@Test(expected = ContactAlreadyExistsException.class)
+	public void createDuplicateContact() {
+		contactsService.createContact(validContact2);
+	}
+
+	@Test(expected = ContactNotFoundException.class)
+	public void getNotExistingContact() {
+		contactsService.getContact("name1000");
+	}
+
+	@Test
+	public void getValidContact() {
+		assertEquals(validContact1, contactsService.getContact(validContact1.getName()));
+	}
+
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void updateContactInvalidTest1() {
+	public void updateContactInvalidTest_invalid_name() {
 		contactsService.updateContact(contactWithInvalidName.getName(), contactWithInvalidName);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void updateContactInvalidTest2() {
+	public void updateContactInvalidTest_invalid_phonenumber() {
 		contactsService.updateContact(contactWithInvalidPhoneNumber.getName(), contactWithInvalidPhoneNumber);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void updateContactInvalidTest3() {
+	public void updateContactInvalidTest_invalid_address() {
 		contactsService.updateContact(contactWithInvalidAddress.getName(), contactWithInvalidAddress);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void updateContactInvalidTest4() {
+	public void updateContactInvalidTest_invalid_email() {
 		contactsService.updateContact(contactWithInvalidEmail.getName(), contactWithInvalidEmail);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void updateContactMissingFieldTest1() {
+	public void updateContactMissingFieldTest_missing_name() {
 		contactsService.updateContact(contactWithMissingName.getName(), contactWithMissingName);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void updateContactMissingFieldTest2() {
+	public void updateContactMissingFieldTest_missing_phonenumber() {
 		contactsService.updateContact(contactWithMissingPhoneNumber.getName(), contactWithMissingPhoneNumber);
 
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void updateContactMissingFieldTest3() {
+	public void updateContactMissingFieldTest_missing_address() {
 		contactsService.updateContact(contactWithInvalidAddress.getName(), contactWithMissingAddress);
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
-	public void updateContactMissingFieldTest4() {
+	public void updateContactMissingFieldTest_missing_email() {
 		contactsService.updateContact(contactWithMissingEmail.getName(), contactWithMissingEmail);
 	}
 
@@ -169,27 +173,20 @@ public class ContactsBackendApplicationTests {
 		Contact validContact = new Contact();
 		validContact.setName("name1000");
 		validContact.setPhoneNumber(1111111111L);
-		validContact.setAddress("#4, east village, NY");
+		validContact.setAddress("#1000, east village, NY");
 		validContact.setEmail("email1@email.com");
 		contactsService.updateContact(validContact.getName(), validContact);
 	}
 
 	@Test
 	public void updateValidContact() {
-		Contact validContact = new Contact();
-		validContact.setName("name4");
-		validContact.setPhoneNumber(4444444444L);
-		validContact.setAddress("#4, east village, NY");
-		validContact.setEmail("four@four.com");
-		contactsService.createContact(validContact);
 		Contact updatedContact = new Contact();
-		updatedContact.setName("name4");
+		updatedContact.setName("name1");
 		updatedContact.setPhoneNumber(6666666666L);
 		updatedContact.setAddress("#4, east village, NY");
 		updatedContact.setEmail("four@four.com");
-		contactsService.updateContact(validContact.getName(), updatedContact);
-		assertEquals(updatedContact, contactsService.getContact(validContact.getName()));
-		contactsService.deleteContact(validContact.getName());
+		contactsService.updateContact(validContact1.getName(), updatedContact);
+		assertEquals(updatedContact, contactsService.getContact(validContact1.getName()));
 	}
 
 	@Test(expected = ContactNotFoundException.class)
@@ -211,26 +208,9 @@ public class ContactsBackendApplicationTests {
 
 	@Test
 	public void searchContactTest() {
-		Contact validContact1 = new Contact();
-		validContact1.setName("name7");
-		validContact1.setPhoneNumber(7777777777L);
-		validContact1.setAddress("#7, east village, NY");
-		validContact1.setEmail("seven@seven.com");
-		contactsService.createContact(validContact1);
-		Contact validContact2 = new Contact();
-		validContact2.setName("name8");
-		validContact2.setPhoneNumber(8888888888L);
-		validContact2.setAddress("#8, west village, NY");
-		validContact2.setEmail("eight@eight.com");
-		contactsService.createContact(validContact2);
-
 		List<Contact> contactList = contactsService.searchContacts(10, 1, "west");
-//		assertTrue(contactList.size() == 1);
-		System.out.println(contactList.size());
+		assertTrue(contactList.size() == 1);
 		assertEquals(validContact2, contactList.get(0));
-
-		contactsService.deleteContact(validContact1.getName());
-		contactsService.deleteContact(validContact2.getName());
 	}
 
 	private static void initializeInvalidContacts() {
@@ -279,6 +259,20 @@ public class ContactsBackendApplicationTests {
 		contactWithMissingEmail.setName("aaaaa");
 		contactWithMissingEmail.setPhoneNumber(1010101010L);
 		contactWithMissingEmail.setAddress("bbbbb");
+	}
+
+	private static void initializeValidContacts() {
+		validContact1 = new Contact();
+		validContact1.setName("name1");
+		validContact1.setPhoneNumber(1111111111L);
+		validContact1.setAddress("#1, east village, NY");
+		validContact1.setEmail("one@one.com");
+
+		validContact2 = new Contact();
+		validContact2.setName("name2");
+		validContact2.setPhoneNumber(2222222222L);
+		validContact2.setAddress("#2, west village, NY");
+		validContact2.setEmail("two@two.com");
 	}
 
 }

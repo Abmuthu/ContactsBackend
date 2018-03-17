@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by muthukumaran on 3/15/18.
@@ -36,8 +39,7 @@ public class ContactsRepository {
     private static final String CLUSTER_NAME = "elasticsearch";
 
     public ContactsRepository() {
-        // TODO : insert client as a bean
-        Settings settings = Settings.builder().put("cluster.name", CLUSTER_NAME).build();
+        final Settings settings = Settings.builder().put("cluster.name", CLUSTER_NAME).build();
         try {
             client = new PreBuiltTransportClient(settings)
                     .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(HOST_NAME), PORT_NUMBER));
@@ -47,25 +49,33 @@ public class ContactsRepository {
     }
 
     public List<Contact> searchContacts(int from, int size, String query) {
-        QueryBuilder qb = QueryBuilders.queryStringQuery(query);
-        SearchRequestBuilder searchRequestBuilder = client.prepareSearch()
+        final QueryBuilder qb = QueryBuilders.queryStringQuery(query);
+        final SearchRequestBuilder searchRequestBuilder = client.prepareSearch()
                 .setIndices("contacts")
                 .setQuery(qb)
                 .setFrom(from)
                 .setSize(size);
 
-        SearchResponse response = searchRequestBuilder.get();
-        System.out.println(response);
-        SearchHit[] searchHits = response.getHits().getHits();
-        List<Contact> resultList = new ArrayList<>();
+        SearchResponse response = null;
+        try {
+            response = searchRequestBuilder.execute().get(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+        final SearchHit[] searchHits = response.getHits().getHits();
+        final List<Contact> resultList = new ArrayList<>();
         for (SearchHit searchHit : searchHits) {
-            String name = searchHit.getId();
-            Map<String, Object> map = searchHit.getSourceAsMap();
-            long phoneNumber = Long.valueOf(map.get("phoneNumber").toString());
-            String address = map.get("address").toString();
-            String email = map.get("emailAddress").toString();
+            final String name = searchHit.getId();
+            final Map<String, Object> map = searchHit.getSourceAsMap();
+            final long phoneNumber = Long.valueOf(map.get("phoneNumber").toString());
+            final String address = map.get("address").toString();
+            final String email = map.get("emailAddress").toString();
 
-            Contact newContact = new Contact();
+            final Contact newContact = new Contact();
             newContact.setName(name);
             newContact.setEmail(email);
             newContact.setAddress(address);
@@ -77,7 +87,7 @@ public class ContactsRepository {
     }
 
     public Contact createContact(Contact contact) {
-        IndexResponse indexResponse = client.prepareIndex("contacts", "name", contact.getName())
+        final IndexResponse indexResponse = client.prepareIndex("contacts", "name", contact.getName())
                 .setSource(new JSONObject()
                         .put("phoneNumber", contact.getPhoneNumber())
                         .put("address", contact.getAddress())
@@ -89,8 +99,8 @@ public class ContactsRepository {
 
 
     public Contact getContact(String name) {
-        GetResponse getResponse = client.prepareGet("contacts", "name", name).get();
-        Map<String, Object> resultMap = getResponse.getSource();
+        final GetResponse getResponse = client.prepareGet("contacts", "name", name).get();
+        final Map<String, Object> resultMap = getResponse.getSource();
         Contact contact = null;
         if (resultMap != null) {
             contact = new Contact();
@@ -103,7 +113,7 @@ public class ContactsRepository {
     }
 
     public Contact updateContact(Contact contact) {
-        UpdateRequest updateRequest = new UpdateRequest();
+        final UpdateRequest updateRequest = new UpdateRequest();
         updateRequest.index("contacts")
                 .type("name")
                 .id(contact.getName())
@@ -112,7 +122,7 @@ public class ContactsRepository {
                     .put("address", contact.getAddress())
                     .put("emailAddress", contact.getEmail()).toString());
         try {
-            UpdateResponse updateResponse = client.update(updateRequest).get();
+            final UpdateResponse updateResponse = client.update(updateRequest).get();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -121,14 +131,14 @@ public class ContactsRepository {
 
 
     public Contact deleteContact(String name) {
-        Contact contact = getContact(name);
-        DeleteResponse deleteResponse = client.prepareDelete("contacts", "name", name).get();
+        final Contact contact = getContact(name);
+        final DeleteResponse deleteResponse = client.prepareDelete("contacts", "name", name).get();
 
         return contact;
     }
 
     public boolean contactExists(String name) {
-        Contact contact = getContact(name);
+        final Contact contact = getContact(name);
         return contact != null;
     }
 
