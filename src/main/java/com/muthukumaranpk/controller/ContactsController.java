@@ -30,9 +30,9 @@ public class ContactsController {
     @RequestMapping(method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Contact> getContacts(@RequestParam(value = "pageSize", required = false, defaultValue = "-1") int pageSize,
+    public List<Contact> getContacts(@RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize,
                                       @RequestParam(value = "page", required = false, defaultValue = "1") int pagesCount,
-                                      @RequestParam(value = "query", required = false, defaultValue = "") String query) {
+                                      @RequestParam(value = "query", required = false, defaultValue = "*") String query) {
 //        System.out.println("PageSize" + pageSize + "Page" + page + "Query" + query);
         return contactsService.searchContacts(pageSize, pagesCount, query);
     }

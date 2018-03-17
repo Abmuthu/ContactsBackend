@@ -12,8 +12,10 @@ import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 
 
 @RunWith(SpringRunner.class)
@@ -67,7 +69,6 @@ public class ContactsBackendApplicationTests {
 	@Test(expected = InvalidContactFieldException.class)
 	public void createContactMissingFieldTest2() {
 		contactsService.createContact(contactWithMissingPhoneNumber);
-
 	}
 
 	@Test(expected = InvalidContactFieldException.class)
@@ -206,6 +207,30 @@ public class ContactsBackendApplicationTests {
 		contactsService.createContact(validContact);
 		contactsService.deleteContact(validContact.getName());
 		contactsService.getContact(validContact.getName());
+	}
+
+	@Test
+	public void searchContactTest() {
+		Contact validContact1 = new Contact();
+		validContact1.setName("name7");
+		validContact1.setPhoneNumber(7777777777L);
+		validContact1.setAddress("#7, east village, NY");
+		validContact1.setEmail("seven@seven.com");
+		contactsService.createContact(validContact1);
+		Contact validContact2 = new Contact();
+		validContact2.setName("name8");
+		validContact2.setPhoneNumber(8888888888L);
+		validContact2.setAddress("#8, west village, NY");
+		validContact2.setEmail("eight@eight.com");
+		contactsService.createContact(validContact2);
+
+		List<Contact> contactList = contactsService.searchContacts(10, 1, "west");
+//		assertTrue(contactList.size() == 1);
+		System.out.println(contactList.size());
+		assertEquals(validContact2, contactList.get(0));
+
+		contactsService.deleteContact(validContact1.getName());
+		contactsService.deleteContact(validContact2.getName());
 	}
 
 	private static void initializeInvalidContacts() {

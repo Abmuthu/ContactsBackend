@@ -54,7 +54,7 @@ public class ContactsRepository {
                 .setFrom(from)
                 .setSize(size);
 
-        SearchResponse response = searchRequestBuilder.execute().actionGet();
+        SearchResponse response = searchRequestBuilder.get();
         System.out.println(response);
         SearchHit[] searchHits = response.getHits().getHits();
         List<Contact> resultList = new ArrayList<>();

@@ -23,7 +23,6 @@ public class ContactsService {
 
     public List<Contact> searchContacts(int pageSize, int page, String query) {
         int from = (page - 1) * pageSize; // calculate
-
         return contactsRepository.searchContacts(from, pageSize, query);
     }
 
