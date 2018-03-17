@@ -8,5 +8,5 @@ Setup: <br />
    5) Run unit tests at ContactsBackendApplicationTests<br />
    <br />
 Notes:<br />
-  1) Transport client talks to elasticsearch at port 9300. To configure change the port number in the ContactsRepository.<br />
-  2) Queries can be made directly via HTTP requests to elasticsearch at port 9200<br />
+  1. Transport client talks to elasticsearch at port 9300. To configure change the port number in the ContactsRepository.<br />
+  2. Queries can be made directly via HTTP requests to elasticsearch at port 9200<br />
