@@ -21,17 +21,19 @@ public class ContactsService {
     @Autowired
     ContactsRepository contactsRepository;
 
-    public List<List<Contact>> searchContacts(int pageSize, int pagesCount, String query) {
-        contactsRepository.searchContacts(query);
-        return null;
+    public List<Contact> searchContacts(int pageSize, int page, String query) {
+        int from = 0; // calculate
+        int size = 0; // calculate
+
+        return contactsRepository.searchContacts(from, size, query);
     }
 
     public Contact createContact(Contact contact) {
         // TODO: check if already exists using name
+        Validator.validateContact(contact);
         if (contactsRepository.contactExists(contact.getName())) {
             throw new ContactAlreadyExistsException(contact.getName());
         }
-        Validator.validateContact(contact);
         return contactsRepository.createContact(contact);
     }
 
@@ -45,10 +47,10 @@ public class ContactsService {
     }
 
     public Contact updateContact(String name, Contact contact) {
+        Validator.validateContact(contact);
         if (!contactsRepository.contactExists(name)) {
             throw new ContactNotFoundException(name);
         }
-        Validator.validateContact(contact);
         return contactsRepository.updateContact(contact);
     }
 

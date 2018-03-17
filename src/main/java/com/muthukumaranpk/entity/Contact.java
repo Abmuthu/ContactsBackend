@@ -53,4 +53,17 @@ public class Contact {
                 ", email='" + email + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Contact contact = (Contact) o;
+
+        if (phoneNumber != contact.phoneNumber) return false;
+        if (name != null ? !name.equals(contact.name) : contact.name != null) return false;
+        if (address != null ? !address.equals(contact.address) : contact.address != null) return false;
+        return email != null ? email.equals(contact.email) : contact.email == null;
+    }
 }

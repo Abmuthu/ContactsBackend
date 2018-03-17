@@ -3,6 +3,7 @@ package com.muthukumaranpk.controller;
 import com.muthukumaranpk.entity.Contact;
 import com.muthukumaranpk.exception.ContactAlreadyExistsException;
 import com.muthukumaranpk.exception.ContactNotFoundException;
+import com.muthukumaranpk.exception.InvalidContactFieldException;
 import com.muthukumaranpk.service.ContactsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class ContactsController {
     @RequestMapping(method = RequestMethod.GET,
                     produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<List<Contact>> getContacts(@RequestParam(value = "pageSize", required = false, defaultValue = "-1") int pageSize,
+    public List<Contact> getContacts(@RequestParam(value = "pageSize", required = false, defaultValue = "-1") int pageSize,
                                       @RequestParam(value = "page", required = false, defaultValue = "1") int pagesCount,
                                       @RequestParam(value = "query", required = false, defaultValue = "") String query) {
 //        System.out.println("PageSize" + pageSize + "Page" + page + "Query" + query);
@@ -80,5 +81,10 @@ public class ContactsController {
     @ExceptionHandler(ContactAlreadyExistsException.class)
     public void handleContactAlreadyExistsException(Exception ex, HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.CONFLICT.value());
+    }
+
+    @ExceptionHandler(InvalidContactFieldException.class)
+    public void handleInvalidContactFieldException(Exception ex, HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.NOT_ACCEPTABLE.value());
     }
 }

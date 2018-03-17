@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,37 +27,34 @@ import java.util.Map;
  */
 @Repository
 public class ContactsRepository {
-
     private TransportClient client;
+    private static final String HOST_NAME = "localhost";
+    private static final int PORT_NUMBER = 9300;
+    private static final String CLUSTER_NAME = "elasticsearch";
 
     public ContactsRepository() {
         // TODO : insert client as a bean
-        Settings settings = Settings.builder().put("cluster.name", "elasticsearch").build();
+        Settings settings = Settings.builder().put("cluster.name", CLUSTER_NAME).build();
         try {
             client = new PreBuiltTransportClient(settings)
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
+                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(HOST_NAME), PORT_NUMBER));
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
     }
 
-    public void searchContacts(String query) {
-        query = "{" +
-                "    \"query\": {" +
-                "        \"query_string\" : {" +
-                "            \"default_field\" : \"name\"," +
-                "            \"query\" : \"muthu\"" +
-                "        }" +
-                "    }" +
-                "}";
+    public List<Contact> searchContacts(int from, int size, String query) {
+        // utilize rangeStart and rangeEnd
         QueryBuilder qb = QueryBuilders.queryStringQuery(query);
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch()
                 .setIndices("contacts")
                 .setQuery(qb);
+//                .setFrom()
+//                .setSize();
 
         SearchResponse response = searchRequestBuilder.execute().actionGet();
-        System.out.println("hi3");
         System.out.println(response);
+        return null;
     }
 
     public Contact createContact(Contact contact) {

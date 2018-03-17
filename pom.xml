@@ -49,6 +49,12 @@
 			<artifactId>transport</artifactId>
 			<version>5.6.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.4.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
